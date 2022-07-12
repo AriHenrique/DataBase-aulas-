@@ -417,3 +417,795 @@ FIRST;
 | VALOR_UNITARIO | varchar(50) | NO   |     | NULL    |                |
 | PRETE          | float(10,2) | NO   |     | NULL    |                |
 +----------------+-------------+------+-----+---------+----------------+
+
+
+DESC CLIENTE;
+
++-----------+---------------+------+-----+---------+----------------+
+| Field     | Type          | Null | Key | Default | Extra          |
++-----------+---------------+------+-----+---------+----------------+
+| IDCLIENTE | int           | NO   | PRI | NULL    | auto_increment |
+| NOME      | varchar(30)   | NO   |     | NULL    |                |
+| SEXO      | enum('M','F') | NO   |     | NULL    |                |
+| EMAIL     | varchar(50)   | YES  | UNI | NULL    |                |
+| CPF       | varchar(15)   | YES  | UNI | NULL    |                |
++-----------+---------------+------+-----+---------+----------------+
+
+DESC ENDERECO;
+
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| IDENDERECO | int         | NO   | PRI | NULL    | auto_increment |
+| RUA        | varchar(30) | NO   |     | NULL    |                |
+| BAIRRO     | varchar(30) | NO   |     | NULL    |                |
+| CIDADE     | varchar(30) | NO   |     | NULL    |                |
+| ESTADO     | char(2)     | NO   |     | NULL    |                |
+| ID_CLIENTE | int         | YES  | UNI | NULL    |                |
++------------+-------------+------+-----+---------+----------------+
+
+DESC TELEFONE;
+
++------------+-------------------------+------+-----+---------+----------------+
+| Field      | Type                    | Null | Key | Default | Extra          |
++------------+-------------------------+------+-----+---------+----------------+
+| IDTELEFONE | int                     | NO   | PRI | NULL    | auto_increment |
+| TIPO       | enum('RES','COM','CEL') | NO   |     | NULL    |                |
+| NUMERO     | varchar(10)             | NO   |     | NULL    |                |
+| ID_CLIENTE | int                     | YES  | MUL | NULL    |                |
++------------+-------------------------+------+-----+---------+----------------+
+
+SELECT C.IDCLIENTE, C.NOME, C.SEXO, C.EMAIL, C.CPF, E.RUA, E.BAIRRO, E.CIDADE, E.ESTADO, T.TIPO, T.NUMERO
+FROM CLIENTE C
+INNER JOIN ENDERECO E 
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T 
+ON C.IDCLIENTE = T.ID_CLIENTE;
+
+SELECT C.IDCLIENTE, C.NOME, C.SEXO, C.EMAIL, C.CPF, E.RUA, E.BAIRRO, E.CIDADE, E.ESTADO, T.TIPO, T.NUMERO
+FROM CLIENTE C
+INNER JOIN ENDERECO E 
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T 
+ON C.IDCLIENTE = T.ID_CLIENTE;
+WHERE SEXO = 'M';
+
+/* UPDATE 12, 13, 18, 19 */
+
+SELECT * FROM CLIENTE
+WHERE IDCLIENTE = 12
+OR IDCLIENTE = 13
+OR IDCLIENTE = 18
+OR IDCLIENTE = 19;
+
++-----------+---------+------+-------------------+-----------+
+| IDCLIENTE | NOME    | SEXO | EMAIL             | CPF       |
++-----------+---------+------+-------------------+-----------+
+|        12 | KARLA   | M    | KARLA@GMAIL.COM   | 545676778 |
+|        13 | DANIELE | M    | DANIELE@GMAIL.COM | 43536789  |
+|        18 | ELAINE  | M    | ELAINE@GLOBO.COM  | 32567763  |
+|        19 | CARMEM  | M    | CARMEM@IG.COM     | 787832213 |
++-----------+---------+------+-------------------+-----------+
+
+/* OU */
+
+SELECT * FROM CLIENTE
+WHERE IDCLIENTE IN (12,13,18,19);
+
++-----------+---------+------+-------------------+-----------+
+| IDCLIENTE | NOME    | SEXO | EMAIL             | CPF       |
++-----------+---------+------+-------------------+-----------+
+|        12 | KARLA   | M    | KARLA@GMAIL.COM   | 545676778 |
+|        13 | DANIELE | M    | DANIELE@GMAIL.COM | 43536789  |
+|        18 | ELAINE  | M    | ELAINE@GLOBO.COM  | 32567763  |
+|        19 | CARMEM  | M    | CARMEM@IG.COM     | 787832213 |
++-----------+---------+------+-------------------+-----------+
+
+UPDATE CLIENTE SET SEXO = 'F'
+WHERE IDCLIENTE IN (12,13,18,19);
+
++-----------+---------+------+-------------------+-----------+
+| IDCLIENTE | NOME    | SEXO | EMAIL             | CPF       |
++-----------+---------+------+-------------------+-----------+
+|        12 | KARLA   | F    | KARLA@GMAIL.COM   | 545676778 |
+|        13 | DANIELE | F    | DANIELE@GMAIL.COM | 43536789  |
+|        18 | ELAINE  | F    | ELAINE@GLOBO.COM  | 32567763  |
+|        19 | CARMEM  | F    | CARMEM@IG.COM     | 787832213 |
++-----------+---------+------+-------------------+-----------+
+
+SELECT C.IDCLIENTE, C.NOME, C.SEXO, C.EMAIL, C.CPF, E.RUA, E.BAIRRO, E.CIDADE, E.ESTADO, T.TIPO, T.NUMERO
+FROM CLIENTE C
+INNER JOIN ENDERECO E 
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T 
+ON C.IDCLIENTE = T.ID_CLIENTE
+WHERE SEXO = 'F'; 
+
+/* UPDATE 16 */
+
+UPDATE CLIENTE SET SEXO = 'M'
+WHERE IDCLIENTE = 16;
+
+/* QUANTIDADE DE M E F */
+
+SELECT COUNT(*) AS QUANTIDADE, SEXO
+FROM CLIENTE
+GROUP BY SEXO;
+
+SELECT C.IDCLIENTE, C.EMAIL, C.NOME, C.SEXO, T.TIPO, E.BAIRRO, E.CIDADE 
+FROM CLIENTE C
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T 
+ON C.IDCLIENTE = T.ID_CLIENTE
+WHERE SEXO = 'F'
+AND BAIRRO = 'CENTRO'
+AND CIDADE = 'RIO DE JANEIRO'
+AND (TIPO = 'RES' OR TIPO = 'COM');
+
++-----------+-------------------+---------+------+------+--------+----------------+
+| IDCLIENTE | EMAIL             | NOME    | SEXO | TIPO | BAIRRO | CIDADE         |
++-----------+-------------------+---------+------+------+--------+----------------+
+|        11 | NULL              | GIOVANA | F    | COM  | CENTRO | RIO DE JANEIRO |
+|        19 | CARMEM@IG.COM     | CARMEM  | F    | RES  | CENTRO | RIO DE JANEIRO |
+|        19 | CARMEM@IG.COM     | CARMEM  | F    | RES  | CENTRO | RIO DE JANEIRO |
+|        20 | ADRIANA@GMAIL.COM | ADRIANA | F    | RES  | CENTRO | RIO DE JANEIRO |
+|        20 | ADRIANA@GMAIL.COM | ADRIANA | F    | COM  | CENTRO | RIO DE JANEIRO |
++-----------+-------------------+---------+------+------+--------+----------------+
+
+SELECT C.NOME, C.EMAIL, T.NUMERO AS CELULAR 
+FROM CLIENTE C
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T 
+ON C.IDCLIENTE = T.ID_CLIENTE
+WHERE TIPO = 'CEL'
+AND ESTADO = 'RJ';
+
++---------+------------------+----------+
+| NOME    | EMAIL            | CELULAR  |
++---------+------------------+----------+
+| JOAO    | JOAO@GMAIL.COM   | 23134343 |
+| CARLOS  | CARLOS@GMAIL.COM | 33787477 |
+| GIOVANA | NULL             | 33567765 |
+| GIOVANA | NULL             | 88668786 |
++---------+------------------+----------+
+
+SELECT C.NOME, C.EMAIL, T.NUMERO AS CELULAR 
+FROM CLIENTE C
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T 
+ON C.IDCLIENTE = T.ID_CLIENTE
+WHERE SEXO = 'F'
+AND ESTADO = 'SP';
+
++--------+------------------+----------+
+| NOME   | EMAIL            | CELULAR  |
++--------+------------------+----------+
+| ANA    | ANA@GMAIL.COM    | 39784741 |
+| ANA    | ANA@GMAIL.COM    | 97873423 |
+| ELAINE | ELAINE@GLOBO.COM | 89955665 |
++--------+------------------+----------+
+
+SELECT  C.NOME,
+        IFNULL(C.EMAIL, '-------NAO TEM EMAIL'),
+        E.ESTADO,
+        T.NUMERO
+FROM CLIENTE C
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T
+ON C.IDCLIENTE = T.ID_CLIENTE;
+
++---------+-----------------------------------------+--------+----------+
+| NOME    | IFNULL(C.EMAIL, '-------NAO TEM EMAIL') | ESTADO | NUMERO   |
++---------+-----------------------------------------+--------+----------+
+| JORGE   | JORGE@GMAIL.COM                         | ES     | 64875362 |
+| JORGE   | JORGE@GMAIL.COM                         | ES     | 87643493 |
+| JOAO    | JOAO@GMAIL.COM                          | RJ     | 23134343 |
+| CARLOS  | CARLOS@GMAIL.COM                        | RJ     | 78967545 |
+| JOAO    | JOAO@GMAIL.COM                          | RJ     | 39434384 |
+| ANA     | ANA@GMAIL.COM                           | SP     | 39784741 |
+| ANA     | ANA@GMAIL.COM                           | SP     | 97873423 |
+| JOAO    | JOAO@GMAIL.COM                          | RJ     | 12383488 |
+| JORGE   | JORGE@GMAIL.COM                         | ES     | 78631278 |
+| CARLOS  | CARLOS@GMAIL.COM                        | RJ     | 33787477 |
+| FLAVIO  | FLAVIO@IG.COM                           | MG     | 68976565 |
+| FLAVIO  | FLAVIO@IG.COM                           | MG     | 99656675 |
+| GIOVANA | -------NAO TEM EMAIL                    | RJ     | 33567765 |
+| GIOVANA | -------NAO TEM EMAIL                    | RJ     | 88668786 |
+| GIOVANA | -------NAO TEM EMAIL                    | RJ     | 55689654 |
+| KARLA   | KARLA@GMAIL.COM                         | RJ     | 88687979 |
+| DANIELE | DANIELE@GMAIL.COM                       | ES     | 88965676 |
+| EDUARDO | -------NAO TEM EMAIL                    | PR     | 89966809 |
+| ANTONIO | ANTONIO@IG.COM                          | SP     | 88679978 |
+| ANTONIO | ANTONIO@UOL.COM                         | PR     | 99655768 |
+| ELAINE  | ELAINE@GLOBO.COM                        | SP     | 89955665 |
+| CARMEM  | CARMEM@IG.COM                           | RJ     | 77455786 |
+| CARMEM  | CARMEM@IG.COM                           | RJ     | 89766554 |
+| ADRIANA | ADRIANA@GMAIL.COM                       | RJ     | 77755785 |
+| ADRIANA | ADRIANA@GMAIL.COM                       | RJ     | 44522578 |
++---------+-----------------------------------------+--------+----------+
+
+SELECT  C.NOME,
+        IFNULL(C.EMAIL, '-------NAO TEM EMAIL') AS "E-MAIL",
+        E.ESTADO,
+        T.NUMERO
+FROM CLIENTE C
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE
+INNER JOIN TELEFONE T
+ON C.IDCLIENTE = T.ID_CLIENTE;
+
++---------+----------------------+--------+----------+
+| NOME    | E-MAIL               | ESTADO | NUMERO   |
++---------+----------------------+--------+----------+
+| JORGE   | JORGE@GMAIL.COM      | ES     | 64875362 |
+| JORGE   | JORGE@GMAIL.COM      | ES     | 87643493 |
+| JOAO    | JOAO@GMAIL.COM       | RJ     | 23134343 |
+| CARLOS  | CARLOS@GMAIL.COM     | RJ     | 78967545 |
+| JOAO    | JOAO@GMAIL.COM       | RJ     | 39434384 |
+| ANA     | ANA@GMAIL.COM        | SP     | 39784741 |
+| ANA     | ANA@GMAIL.COM        | SP     | 97873423 |
+| JOAO    | JOAO@GMAIL.COM       | RJ     | 12383488 |
+| JORGE   | JORGE@GMAIL.COM      | ES     | 78631278 |
+| CARLOS  | CARLOS@GMAIL.COM     | RJ     | 33787477 |
+| FLAVIO  | FLAVIO@IG.COM        | MG     | 68976565 |
+| FLAVIO  | FLAVIO@IG.COM        | MG     | 99656675 |
+| GIOVANA | -------NAO TEM EMAIL | RJ     | 33567765 |
+| GIOVANA | -------NAO TEM EMAIL | RJ     | 88668786 |
+| GIOVANA | -------NAO TEM EMAIL | RJ     | 55689654 |
+| KARLA   | KARLA@GMAIL.COM      | RJ     | 88687979 |
+| DANIELE | DANIELE@GMAIL.COM    | ES     | 88965676 |
+| EDUARDO | -------NAO TEM EMAIL | PR     | 89966809 |
+| ANTONIO | ANTONIO@IG.COM       | SP     | 88679978 |
+| ANTONIO | ANTONIO@UOL.COM      | PR     | 99655768 |
+| ELAINE  | ELAINE@GLOBO.COM     | SP     | 89955665 |
+| CARMEM  | CARMEM@IG.COM        | RJ     | 77455786 |
+| CARMEM  | CARMEM@IG.COM        | RJ     | 89766554 |
+| ADRIANA | ADRIANA@GMAIL.COM    | RJ     | 77755785 |
+| ADRIANA | ADRIANA@GMAIL.COM    | RJ     | 44522578 |
++---------+----------------------+--------+----------+
+
+SELECT  C.NOME,
+        C.SEXO,
+        C.EMAIL,
+        T.TIPO,
+        T.NUMERO,
+        E.BAIRRO,
+        E.CIDADE,
+        E.ESTADO
+FROM CLIENTE C
+INNER JOIN TELEFONE T
+ON C.IDCLIENTE = T.ID_CLIENTE
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE;
+
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| NOME    | SEXO | EMAIL             | TIPO | NUMERO   | BAIRRO     | CIDADE         | ESTADO |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| JORGE   | M    | JORGE@GMAIL.COM   | CEL  | 64875362 | CENTRO     | VITORIA        | ES     |
+| JORGE   | M    | JORGE@GMAIL.COM   | RES  | 87643493 | CENTRO     | VITORIA        | ES     |
+| JOAO    | M    | JOAO@GMAIL.COM    | CEL  | 23134343 | CENTRO     | RIO DE JANEIRO | RJ     |
+| CARLOS  | M    | CARLOS@GMAIL.COM  | COM  | 78967545 | ESTACIO    | RIO DE JANEIRO | RJ     |
+| JOAO    | M    | JOAO@GMAIL.COM    | RES  | 39434384 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 39784741 | JARDIM     | SAO PAULO      | SP     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 97873423 | JARDIM     | SAO PAULO      | SP     |
+| JOAO    | M    | JOAO@GMAIL.COM    | COM  | 12383488 | CENTRO     | RIO DE JANEIRO | RJ     |
+| JORGE   | M    | JORGE@GMAIL.COM   | RES  | 78631278 | CENTRO     | VITORIA        | ES     |
+| CARLOS  | M    | CARLOS@GMAIL.COM  | CEL  | 33787477 | ESTACIO    | RIO DE JANEIRO | RJ     |
+| FLAVIO  | M    | FLAVIO@IG.COM     | RES  | 68976565 | CASCADURA  | B. HORIZONTE   | MG     |
+| FLAVIO  | M    | FLAVIO@IG.COM     | CEL  | 99656675 | CASCADURA  | B. HORIZONTE   | MG     |
+| GIOVANA | F    | NULL              | CEL  | 33567765 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | NULL              | CEL  | 88668786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | NULL              | COM  | 55689654 | CENTRO     | RIO DE JANEIRO | RJ     |
+| KARLA   | F    | KARLA@GMAIL.COM   | COM  | 88687979 | COPACABANA | RIO DE JANEIRO | RJ     |
+| DANIELE | F    | DANIELE@GMAIL.COM | COM  | 88965676 | CENTRO     | VITORIA        | ES     |
+| EDUARDO | M    | NULL              | CEL  | 89966809 | CENTRO     | CURITIBA       | PR     |
+| ANTONIO | M    | ANTONIO@IG.COM    | COM  | 88679978 | JARDINS    | SAO PAULO      | SP     |
+| ANTONIO | M    | ANTONIO@UOL.COM   | CEL  | 99655768 | BOM RETIRO | CURITIBA       | PR     |
+| ELAINE  | F    | ELAINE@GLOBO.COM  | RES  | 89955665 | LAPA       | SAO PAULO      | SP     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 77455786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 89766554 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | RES  | 77755785 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | COM  | 44522578 | CENTRO     | RIO DE JANEIRO | RJ     |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+
+CREATE VIEW RELATORIO AS
+SELECT  C.NOME,
+        C.SEXO,
+        C.EMAIL,
+        T.TIPO,
+        T.NUMERO,
+        E.BAIRRO,
+        E.CIDADE,
+        E.ESTADO
+FROM CLIENTE C
+INNER JOIN TELEFONE T
+ON C.IDCLIENTE = T.ID_CLIENTE
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE;
+
+SELECT * FROM RELATORIO;
+
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| NOME    | SEXO | EMAIL             | TIPO | NUMERO   | BAIRRO     | CIDADE         | ESTADO |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| JORGE   | M    | JORGE@GMAIL.COM   | CEL  | 64875362 | CENTRO     | VITORIA        | ES     |
+| JORGE   | M    | JORGE@GMAIL.COM   | RES  | 87643493 | CENTRO     | VITORIA        | ES     |
+| JOAO    | M    | JOAO@GMAIL.COM    | CEL  | 23134343 | CENTRO     | RIO DE JANEIRO | RJ     |
+| CARLOS  | M    | CARLOS@GMAIL.COM  | COM  | 78967545 | ESTACIO    | RIO DE JANEIRO | RJ     |
+| JOAO    | M    | JOAO@GMAIL.COM    | RES  | 39434384 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 39784741 | JARDIM     | SAO PAULO      | SP     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 97873423 | JARDIM     | SAO PAULO      | SP     |
+| JOAO    | M    | JOAO@GMAIL.COM    | COM  | 12383488 | CENTRO     | RIO DE JANEIRO | RJ     |
+| JORGE   | M    | JORGE@GMAIL.COM   | RES  | 78631278 | CENTRO     | VITORIA        | ES     |
+| CARLOS  | M    | CARLOS@GMAIL.COM  | CEL  | 33787477 | ESTACIO    | RIO DE JANEIRO | RJ     |
+| FLAVIO  | M    | FLAVIO@IG.COM     | RES  | 68976565 | CASCADURA  | B. HORIZONTE   | MG     |
+| FLAVIO  | M    | FLAVIO@IG.COM     | CEL  | 99656675 | CASCADURA  | B. HORIZONTE   | MG     |
+| GIOVANA | F    | NULL              | CEL  | 33567765 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | NULL              | CEL  | 88668786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | NULL              | COM  | 55689654 | CENTRO     | RIO DE JANEIRO | RJ     |
+| KARLA   | F    | KARLA@GMAIL.COM   | COM  | 88687979 | COPACABANA | RIO DE JANEIRO | RJ     |
+| DANIELE | F    | DANIELE@GMAIL.COM | COM  | 88965676 | CENTRO     | VITORIA        | ES     |
+| EDUARDO | M    | NULL              | CEL  | 89966809 | CENTRO     | CURITIBA       | PR     |
+| ANTONIO | M    | ANTONIO@IG.COM    | COM  | 88679978 | JARDINS    | SAO PAULO      | SP     |
+| ANTONIO | M    | ANTONIO@UOL.COM   | CEL  | 99655768 | BOM RETIRO | CURITIBA       | PR     |
+| ELAINE  | F    | ELAINE@GLOBO.COM  | RES  | 89955665 | LAPA       | SAO PAULO      | SP     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 77455786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 89766554 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | RES  | 77755785 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | COM  | 44522578 | CENTRO     | RIO DE JANEIRO | RJ     |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+
+/* APAGAR VIEW */
+
+DROP VIEW RELATORIO;
+
+/* INSERINDO UM PREFIXO */
+
+CREATE VIEW V_RELATORIO AS
+SELECT  C.NOME,
+        C.SEXO,
+        IFNULL(C.EMAIL, 'CLIENTE SEM EMAIL') AS "E-MAIL",
+        T.TIPO,
+        T.NUMERO,
+        E.BAIRRO,
+        E.CIDADE,
+        E.ESTADO
+FROM CLIENTE C
+INNER JOIN TELEFONE T
+ON C.IDCLIENTE = T.ID_CLIENTE
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE;
+
+SHOW TABLES; /* AS VIEWS APARECEM NAS TABLES, NÃO EXISTE COMANDO "SHOW VIEWS;" */
+
++--------------------+
+| Tables_in_comercio |
++--------------------+
+| cliente            |
+| endereco           |
+| produto            |
+| telefone           |
+| v_relatorio        |
++--------------------+
+
+SELECT NOME, NUMERO, ESTADO
+FROM V_RELATORIO;
+
++---------+----------+--------+
+| NOME    | NUMERO   | ESTADO |
++---------+----------+--------+
+| JORGE   | 64875362 | ES     |
+| JORGE   | 87643493 | ES     |
+| JOAO    | 23134343 | RJ     |
+| CARLOS  | 78967545 | RJ     |
+| JOAO    | 39434384 | RJ     |
+| ANA     | 39784741 | SP     |
+| ANA     | 97873423 | SP     |
+| JOAO    | 12383488 | RJ     |
+| JORGE   | 78631278 | ES     |
+| CARLOS  | 33787477 | RJ     |
+| FLAVIO  | 68976565 | MG     |
+| FLAVIO  | 99656675 | MG     |
+| GIOVANA | 33567765 | RJ     |
+| GIOVANA | 88668786 | RJ     |
+| GIOVANA | 55689654 | RJ     |
+| KARLA   | 88687979 | RJ     |
+| DANIELE | 88965676 | ES     |
+| EDUARDO | 89966809 | PR     |
+| ANTONIO | 88679978 | SP     |
+| ANTONIO | 99655768 | PR     |
+| ELAINE  | 89955665 | SP     |
+| CARMEM  | 77455786 | RJ     |
+| CARMEM  | 89766554 | RJ     |
+| ADRIANA | 77755785 | RJ     |
+| ADRIANA | 44522578 | RJ     |
++---------+----------+--------+
+
+/* UPDATE, INSERT E DELETE - DML */
+
+INSERT INTO V_RELATORIO VALUES(
+    'ANDREIA','F','ANDREIA@GMAIL.COM','CEL','89138431','CENTRO','VITORIA','ES'
+);
+
+/* DELETE E INSERT NAO FUNCIONAM EM VIEWS COM "JOIN", APENAS UPDATE */
+ERROR 1394 (HY000): Can not insert into join view 'comercio.v_relatorio' without fields list
+
+CREATE TABLE JOGADORES(
+    IDJOGADOR INT,
+    NOME VARCHAR(30),
+    ESTADO CHAR(2)
+);
+
+INSERT INTO JOGADORES VALUES(1,'GUERRERO','RS'),
+                            (2,'GABIGOL','RJ'),
+                            (3,'GANSO','RJ'),
+                            (4,'NENE','RJ'),
+                            (5,'LOVE','SP');
+
++-----------+----------+--------+
+| IDJOGADOR | NOME     | ESTADO |
++-----------+----------+--------+
+|         1 | GUERRERO | RS     |
+|         2 | GABIGOL  | RJ     |
+|         3 | GANSO    | RJ     |
+|         4 | NENE     | RJ     |
+|         5 | LOVE     | SP     |
++-----------+----------+--------+
+
+CREATE VIEW V_JOGADORES AS 
+SELECT NOME, ESTADO
+FROM JOGADORES;
+
++----------+--------+
+| NOME     | ESTADO |
++----------+--------+
+| GUERRERO | RS     |
+| GABIGOL  | RJ     |
+| GANSO    | RJ     |
+| NENE     | RJ     |
+| LOVE     | SP     |
++----------+--------+
+
+DELETE FROM V_JOGADORES
+WHERE NOME = 'GUERRERO';
+
+SELECT * FROM V_JOGADORES;
+
++---------+--------+
+| NOME    | ESTADO |
++---------+--------+
+| GABIGOL | RJ     |
+| GANSO   | RJ     |
+| NENE    | RJ     |
+| LOVE    | SP     |
++---------+--------+
+
+INSERT INTO V_JOGADORES VALUES(
+    'GUERREO',
+    'RS'
+);
+
++---------+--------+
+| NOME    | ESTADO |
++---------+--------+
+| GABIGOL | RJ     |
+| GANSO   | RJ     |
+| NENE    | RJ     |
+| LOVE    | SP     |
+| GUERREO | RS     |
++---------+--------+
+
+SELECT * FROM JOGADORES;
+
++-----------+---------+--------+
+| IDJOGADOR | NOME    | ESTADO |
++-----------+---------+--------+
+|         2 | GABIGOL | RJ     |
+|         3 | GANSO   | RJ     |
+|         4 | NENE    | RJ     |
+|         5 | LOVE    | SP     |
+|      NULL | GUERREO | RS     |
++-----------+---------+--------+
+
+SELECT * FROM V_RELATORIO
+WHERE SEXO = 'F';
+
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| NOME    | SEXO | E-MAIL            | TIPO | NUMERO   | BAIRRO     | CIDADE         | ESTADO |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 39784741 | JARDIM     | SAO PAULO      | SP     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 97873423 | JARDIM     | SAO PAULO      | SP     |
+| GIOVANA | F    | CLIENTE SEM EMAIL | CEL  | 33567765 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | CLIENTE SEM EMAIL | CEL  | 88668786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | CLIENTE SEM EMAIL | COM  | 55689654 | CENTRO     | RIO DE JANEIRO | RJ     |
+| KARLA   | F    | KARLA@GMAIL.COM   | COM  | 88687979 | COPACABANA | RIO DE JANEIRO | RJ     |
+| DANIELE | F    | DANIELE@GMAIL.COM | COM  | 88965676 | CENTRO     | VITORIA        | ES     |
+| ELAINE  | F    | ELAINE@GLOBO.COM  | RES  | 89955665 | LAPA       | SAO PAULO      | SP     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 77455786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 89766554 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | RES  | 77755785 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | COM  | 44522578 | CENTRO     | RIO DE JANEIRO | RJ     |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+
+/* ORDER BY */
+
+CREATE TABLE ALUNOS(
+    NUMERO INT,
+    NOME VARCHAR(30)
+);
+
+INSERT INTO ALUNOS VALUES(1, 'JOAO'),
+                         (1, 'MARIA'),
+                         (2, 'ZOE'),
+                         (2, 'ANDRE'),
+                         (3, 'CLARA'),
+                         (1, 'CLARA'),
+                         (4, 'MAFRA'),
+                         (1, 'JANAINA'),
+                         (5, 'JANAINA'),
+                         (3, 'MARCELO'),
+                         (4, 'GIOVANE'),
+                         (5, 'ANTONIO'),
+                         (6, 'ANA'),
+                         (6, 'VIVIANE');
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      1 | JOAO    |
+|      1 | MARIA   |
+|      2 | ZOE     |
+|      2 | ANDRE   |
+|      3 | CLARA   |
+|      1 | CLARA   |
+|      4 | MAFRA   |
+|      1 | JANAINA |
+|      5 | JANAINA |
+|      3 | MARCELO |
+|      4 | GIOVANE |
+|      5 | ANTONIO |
+|      6 | ANA     |
+|      6 | VIVIANE |
++--------+---------+
+
+SELECT * FROM ALUNOS
+ORDER BY NUMERO; /* ORDENA PELO NOME DA COLUNA */
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      1 | JOAO    |
+|      1 | MARIA   |
+|      1 | CLARA   |
+|      1 | JANAINA |
+|      2 | ZOE     |
+|      2 | ANDRE   |
+|      3 | CLARA   |
+|      3 | MARCELO |
+|      4 | MAFRA   |
+|      4 | GIOVANE |
+|      5 | JANAINA |
+|      5 | ANTONIO |
+|      6 | ANA     |
+|      6 | VIVIANE |
++--------+---------+
+
+/* ORDENA PELO NUMERO DA COLUNA */
+
+SELECT * FROM ALUNOS
+ORDER BY 1;
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      1 | JOAO    |
+|      1 | MARIA   |
+|      1 | CLARA   |
+|      1 | JANAINA |
+|      2 | ZOE     |
+|      2 | ANDRE   |
+|      3 | CLARA   |
+|      3 | MARCELO |
+|      4 | MAFRA   |
+|      4 | GIOVANE |
+|      5 | JANAINA |
+|      5 | ANTONIO |
+|      6 | ANA     |
+|      6 | VIVIANE |
++--------+---------+
+
+SELECT * FROM ALUNOS
+ORDER BY 2;
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      6 | ANA     |
+|      2 | ANDRE   |
+|      5 | ANTONIO |
+|      3 | CLARA   |
+|      1 | CLARA   |
+|      4 | GIOVANE |
+|      1 | JANAINA |
+|      5 | JANAINA |
+|      1 | JOAO    |
+|      4 | MAFRA   |
+|      3 | MARCELO |
+|      1 | MARIA   |
+|      6 | VIVIANE |
+|      2 | ZOE     |
++--------+---------+
+
+/* ORDENANDO POR MAIS DE UMA COLUNA */
+
+SELECT * FROM ALUNOS
+ORDER BY NUMERO, NOME;
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      1 | CLARA   |
+|      1 | JANAINA |
+|      1 | JOAO    |
+|      1 | MARIA   |
+|      2 | ANDRE   |
+|      2 | ZOE     |
+|      3 | CLARA   |
+|      3 | MARCELO |
+|      4 | GIOVANE |
+|      4 | MAFRA   |
+|      5 | ANTONIO |
+|      5 | JANAINA |
+|      6 | ANA     |
+|      6 | VIVIANE |
++--------+---------+
+
+/* MESCLANDO ORDER BY COM PROJECAO */
+
+SELECT NOME FROM ALUNOS
+ORDER BY 1, 2;
+
+ERROR 1054 (42S22): Unknown column '2' in 'order clause'
+
+SELECT NOME FROM ALUNOS
+ORDER BY NUMERO, NOME;
+
++---------+
+| NOME    |
++---------+
+| CLARA   |
+| JANAINA |
+| JOAO    |
+| MARIA   |
+| ANDRE   |
+| ZOE     |
+| CLARA   |
+| MARCELO |
+| GIOVANE |
+| MAFRA   |
+| ANTONIO |
+| JANAINA |
+| ANA     |
+| VIVIANE |
++---------+
+
+/* ORDER BY DESC / ASC */
+
+SELECT * FROM ALUNOS
+ORDER BY 1, 2;
+
+SELECT * FROM ALUNOS
+ORDER BY 1 ASC; /* DO MENOR PRO MAIOR (POR PADRAO) */
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      1 | JOAO    |
+|      1 | MARIA   |
+|      1 | CLARA   |
+|      1 | JANAINA |
+|      2 | ZOE     |
+|      2 | ANDRE   |
+|      3 | CLARA   |
+|      3 | MARCELO |
+|      4 | MAFRA   |
+|      4 | GIOVANE |
+|      5 | JANAINA |
+|      5 | ANTONIO |
+|      6 | ANA     |
+|      6 | VIVIANE |
++--------+---------+
+
+SELECT * FROM ALUNOS
+ORDER BY 1 DESC; /* DO MAIOR PRO MENOR*/
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      6 | ANA     |
+|      6 | VIVIANE |
+|      5 | JANAINA |
+|      5 | ANTONIO |
+|      4 | MAFRA   |
+|      4 | GIOVANE |
+|      3 | CLARA   |
+|      3 | MARCELO |
+|      2 | ZOE     |
+|      2 | ANDRE   |
+|      1 | JOAO    |
+|      1 | MARIA   |
+|      1 | CLARA   |
+|      1 | JANAINA |
++--------+---------+
+
+SELECT * FROM ALUNOS
+ORDER BY 1, 2 DESC;
+
++--------+---------+
+| NUMERO | NOME    |
++--------+---------+
+|      1 | MARIA   |
+|      1 | JOAO    |
+|      1 | JANAINA |
+|      1 | CLARA   |
+|      2 | ZOE     |
+|      2 | ANDRE   |
+|      3 | MARCELO |
+|      3 | CLARA   |
+|      4 | MAFRA   |
+|      4 | GIOVANE |
+|      5 | JANAINA |
+|      5 | ANTONIO |
+|      6 | VIVIANE |
+|      6 | ANA     |
++--------+---------+
+
+SELECT  C.NOME,
+        C.SEXO,
+        IFNULL(C.EMAIL, 'CLIENTE SEM EMAIL') AS "E-MAIL",
+        T.TIPO,
+        T.NUMERO,
+        E.BAIRRO,
+        E.CIDADE,
+        E.ESTADO
+FROM CLIENTE C
+INNER JOIN TELEFONE T
+ON C.IDCLIENTE = T.ID_CLIENTE
+INNER JOIN ENDERECO E
+ON C.IDCLIENTE = E.ID_CLIENTE
+ORDER BY 1;
+
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| NOME    | SEXO | E-MAIL            | TIPO | NUMERO   | BAIRRO     | CIDADE         | ESTADO |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+| ADRIANA | F    | ADRIANA@GMAIL.COM | RES  | 77755785 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ADRIANA | F    | ADRIANA@GMAIL.COM | COM  | 44522578 | CENTRO     | RIO DE JANEIRO | RJ     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 39784741 | JARDIM     | SAO PAULO      | SP     |
+| ANA     | F    | ANA@GMAIL.COM     | CEL  | 97873423 | JARDIM     | SAO PAULO      | SP     |
+| ANTONIO | M    | ANTONIO@IG.COM    | COM  | 88679978 | JARDINS    | SAO PAULO      | SP     |
+| ANTONIO | M    | ANTONIO@UOL.COM   | CEL  | 99655768 | BOM RETIRO | CURITIBA       | PR     |
+| CARLOS  | M    | CARLOS@GMAIL.COM  | COM  | 78967545 | ESTACIO    | RIO DE JANEIRO | RJ     |
+| CARLOS  | M    | CARLOS@GMAIL.COM  | CEL  | 33787477 | ESTACIO    | RIO DE JANEIRO | RJ     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 77455786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| CARMEM  | F    | CARMEM@IG.COM     | RES  | 89766554 | CENTRO     | RIO DE JANEIRO | RJ     |
+| DANIELE | F    | DANIELE@GMAIL.COM | COM  | 88965676 | CENTRO     | VITORIA        | ES     |
+| EDUARDO | M    | CLIENTE SEM EMAIL | CEL  | 89966809 | CENTRO     | CURITIBA       | PR     |
+| ELAINE  | F    | ELAINE@GLOBO.COM  | RES  | 89955665 | LAPA       | SAO PAULO      | SP     |
+| FLAVIO  | M    | FLAVIO@IG.COM     | RES  | 68976565 | CASCADURA  | B. HORIZONTE   | MG     |
+| FLAVIO  | M    | FLAVIO@IG.COM     | CEL  | 99656675 | CASCADURA  | B. HORIZONTE   | MG     |
+| GIOVANA | F    | CLIENTE SEM EMAIL | CEL  | 33567765 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | CLIENTE SEM EMAIL | CEL  | 88668786 | CENTRO     | RIO DE JANEIRO | RJ     |
+| GIOVANA | F    | CLIENTE SEM EMAIL | COM  | 55689654 | CENTRO     | RIO DE JANEIRO | RJ     |
+| JOAO    | M    | JOAO@GMAIL.COM    | CEL  | 23134343 | CENTRO     | RIO DE JANEIRO | RJ     |
+| JOAO    | M    | JOAO@GMAIL.COM    | RES  | 39434384 | CENTRO     | RIO DE JANEIRO | RJ     |
+| JOAO    | M    | JOAO@GMAIL.COM    | COM  | 12383488 | CENTRO     | RIO DE JANEIRO | RJ     |
+| JORGE   | M    | JORGE@GMAIL.COM   | CEL  | 64875362 | CENTRO     | VITORIA        | ES     |
+| JORGE   | M    | JORGE@GMAIL.COM   | RES  | 87643493 | CENTRO     | VITORIA        | ES     |
+| JORGE   | M    | JORGE@GMAIL.COM   | RES  | 78631278 | CENTRO     | VITORIA        | ES     |
+| KARLA   | F    | KARLA@GMAIL.COM   | COM  | 88687979 | COPACABANA | RIO DE JANEIRO | RJ     |
++---------+------+-------------------+------+----------+------------+----------------+--------+
+
